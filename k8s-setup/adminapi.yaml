@@ -35,3 +35,14 @@ spec:
         image: rasmuskibshede/adminapi:latest
         ports:
         - containerPort: 3000
+        env:
+        - name: DB_HOST
+          value: mysql-service # service name
+        - name: DB_DBPORT
+          value: "3306"
+        - name: DB_USERNAME
+          value: root
+        - name: DB_PASSWORD
+          value: password
+        - name: DB_DATABASE
+          value: scrum_hub
