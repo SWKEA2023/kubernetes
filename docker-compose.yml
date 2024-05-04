@@ -19,7 +19,6 @@ services:
       - ELASTIC_USERNAME=elastic
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     
-    
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq

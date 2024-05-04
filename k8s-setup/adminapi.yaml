@@ -7,9 +7,9 @@ metadata:
     app: adminapi
 spec:
   ports:
-  - port: 3000
-    protocol: TCP
-    name: http
+    - port: 3000
+      protocol: TCP
+      name: http
   selector:
     app: adminapi
   type: LoadBalancer
@@ -31,18 +31,31 @@ spec:
         app: adminapi
     spec: # Pod spec
       containers:
-      - name: adminapi
-        image: rasmuskibshede/adminapi:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: DB_HOST
-          value: mysql-service # service name
-        - name: DB_DBPORT
-          value: "3306"
-        - name: DB_USERNAME
-          value: root
-        - name: DB_PASSWORD
-          value: password
-        - name: DB_DATABASE
-          value: scrum_hub
+        - name: adminapi
+          image: rasmuskibshede/adminapi:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_HOST
+              value: mysql-service
+            - name: DB_DBPORT
+              value: "3306"
+            - name: DB_USERNAME
+              value: root
+            - name: DB_PASSWORD
+              value: password
+            - name: DB_DATABASE
+              value: scrum_hub
+            - name: RMQ_QUEUE
+              value: Elastic_QUEUE
+            - name: RABBITMQ_VHOST
+              value: my_vhost
+            - name: RMQ_URL
+              value: amqp://admin:password123@rabbitmq-service/my_vhost
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "0.5"
+              memory: "512Mi"
