@@ -1,7 +1,12 @@
 # kubernetes
-This is a repo for orchestration the dls projects microservices and more
+This is a repo for orchestration the dls projects microservices and databases
 
 
 
 # Tools
-- https://minikube.sigs.k8s.io/docs/start/
+- Kubernetes
+- Minikube
+- Kubectl
+
+## Driver
+- docker driver
