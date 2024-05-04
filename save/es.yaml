@@ -24,6 +24,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: es-service
+  labels:
+    app: es
 spec:
   ports:
     - port: 9200
@@ -34,7 +36,9 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: es
+  name: es-deployment
+  labels:
+    app: es
 spec:
   replicas: 1
   selector:

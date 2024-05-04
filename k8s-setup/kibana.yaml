@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: kibana
+  name: kibana-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana-service
+  labels:
+    app: kibana
+spec:
+  ports:
+    - name: "5601"
+      port: 5601
+      targetPort: 5601
+  selector:
+    app: kibana
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  labels:
+    app: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+        - name: kibana
+          image: docker.elastic.co/kibana/kibana:8.13.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: ELASTICSEARCH_PASSWORD
+              value: password123
+            - name: ELASTICSEARCH_USERNAME
+              value: kibana_system
+            - name: ELASTICSEARCH_HOSTS
+              value: elasticsearch-service
+            - name: SERVERNAME
+              value: kibana
+            - name: XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY
+              value: "c34d38b3a14956121ff2170e5030b471551370178f43e5626eec58b04a30fae2"
+            - name: XPACK_REPORTING_ENCRYPTIONKEY
+              value: "c34d38b3a14956121ff2170e5030b471551370178f43e5626eec58b04a30fae2"
+            - name: XPACK_SECURITY_ENCRYPTIONKEY
+              value: "c34d38b3a14956121ff2170e5030b471551370178f43e5626eec58b04a30fae2"
+            - name: xpack.security.http.ssl.enabled
+              value: "false"
+            - name: xpack.security.transport.ssl.enabled
+              value: "true"
+          ports:
+            - containerPort: 5601
+      restartPolicy: Always
+      volumes:
+        - name: kibana-pvc
+          persistentVolumeClaim:
+            claimName: kibana-pvc
