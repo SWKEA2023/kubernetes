@@ -21,11 +21,9 @@ metadata:
 spec:
   selector:
     app: elasticsearch
-  type: NodePort
   ports:
     - port: 9200
       targetPort: 9200
-      nodePort: 31200
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -50,6 +48,8 @@ spec:
             - containerPort: 9200
             - containerPort: 9300
           env:
+            - name: ELASTIC_PASSWORD
+              value: password123
             - name: discovery.type
               value: single-node
             - name: node.name
