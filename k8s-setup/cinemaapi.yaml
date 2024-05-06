@@ -2,37 +2,39 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: indexapi-service
+  name: cinemaapi-service
   labels:
-    app: indexapi
+    app: cinemaapi
 spec:
   ports:
-    - port: 3001
+    - port: 3002
+      protocol: TCP
+      name: http
   selector:
-    app: indexapi
+    app: cinemaapi
   type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: indexapi-deployment
+  name: cinemaapi-deployment
   labels:
-    app: indexapi
+    app: cinemaapi
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: indexapi
+      app: cinemaapi
   template:
     metadata:
       labels:
-        app: indexapi
+        app: cinemaapi
     spec: # Pod spec
       containers:
-        - name: indexapi
-          image: rasmuskibshede/indexelasticsearch:latest
+        - name: cinemaapi
+          image: rasmuskibshede/cinemaapi:latest
           ports:
-            - containerPort: 3001
+            - containerPort: 3002
           env:
             - name: ELASTIC_HOST
               value: http://esservice
