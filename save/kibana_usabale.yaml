@@ -53,7 +53,7 @@ spec:
             - name: ELASTICSEARCH_USERNAME
               value: kibana_system
             - name: ELASTICSEARCH_HOSTS
-              value: elasticsearch-service
+              value: "http://elasticsearch:9200"
             - name: SERVERNAME
               value: kibana
             - name: XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY

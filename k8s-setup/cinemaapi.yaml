@@ -37,7 +37,7 @@ spec:
             - containerPort: 3002
           env:
             - name: ELASTIC_HOST
-              value: http://esservice
+              value: http://elasticsearch:9200
             - name: ELASTIC_USERNAME
               value: elastic
             - name: ELASTIC_PASSWORD
