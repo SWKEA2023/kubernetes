@@ -38,7 +38,7 @@ This is a repo for orchestration the dls projects microservices and databases
 ```` bash
     $ npm run down
 ````
-## Without node package manager (npm)
+### Without node package manager (npm)
 `Run kubernetes clusters`
 ```` bash
     $ kubectl apply -f k8s-setup/
@@ -49,3 +49,9 @@ This is a repo for orchestration the dls projects microservices and databases
     $ kubectl delete -f k8s-setup/
 ````
 
+### To serve the containers
+
+`Open connections to all services with an ip and port`
+```` bash
+    $ minikube service --all
+````
