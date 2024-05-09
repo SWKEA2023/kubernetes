@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: transaction-service
+  labels:
+    app: transaction
+spec:
+  ports:
+    - port: 3005
+  selector:
+    app: transaction
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transaction-deployment
+  labels:
+    app: transaction
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transaction
+  template:
+    metadata:
+      labels:
+        app: transaction
+    spec: # Pod spec
+      containers:
+        - name: mycontainer
+          image: rasmuskibshede/transactionapi:latest
+          ports:
+            - containerPort: 3005
+          command:
+            [
+              "dotnet",
+              "user-secrets",
+              "set",
+              "RabbitMQ:RMQ_URL",
+              "amqp://admin:password123@rabbitmq-service/my_vhost",
+            ]
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+            requests:
+              cpu: "0.5"
+              memory: "512Mi"
