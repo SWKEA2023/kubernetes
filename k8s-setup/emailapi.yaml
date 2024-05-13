@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: emailapi-service
+  labels:
+    app: emailapi
+spec:
+  ports:
+    - port: 3004
+  selector:
+    app: emailapi
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emailapi-deployment
+  labels:
+    app: emailapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emailapi
+  template:
+    metadata:
+      labels:
+        app: emailapi
+    spec: # Pod spec
+      containers:
+        - name: emailapi
+          image: rasmuskibshede/emailapi:latest
+          ports:
+            - containerPort: 3004
+          env:
+            - name: RMQ_URL
+              value: "amqp://admin:password123@rabbitmq-service/my_vhost"
+            - name: MAIL_USERNAME
+              value: ${MAIL_USERNAME}
+            - name: MAIL_PASSWORD
+              value: ${MAIL_PASSWORD}
+            - name: TRANSACTION_QUEUE
+              value: email_api.declined
+            - name: ADMIN_QUEUE
+              value: email_api.success
+          resources:
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+            requests:
+              cpu: "0.5"
+              memory: "256Mi"

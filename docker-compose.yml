@@ -1,24 +1,6 @@
 version: '3'
 
 services:
-  index_api:
-    depends_on:
-      - rabbitmq
-      - es01
-    image: rasmuskibshede/indexelasticsearch:latest
-    ports:
-      - '3001:3001'
-    environment:
-      - RMQ_URL=amqp://admin:password123@rabbitmq:5672/my_vhost
-      - RABBITMQ_USER=admin
-      - RABBITMQ_PASSWORD=password123
-      - RABBITMQ_VHOST=my_vhost
-      - RMQ_QUEUE=Elastic_QUEUE
-      - ELASTIC_HOST=https://es01:9200
-      - ELASTIC_INDEX_TARGET=movies
-      - ELASTIC_USERNAME=elastic
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-
   admin_api:
     depends_on:
       - mysql
@@ -31,12 +13,65 @@ services:
       - RABBITMQ_USER=admin
       - RABBITMQ_PASSWORD=password123
       - RABBITMQ_VHOST=my_vhost
-      - RMQ_QUEUE=Elastic_QUEUE
+      - RMQ_QUEUE_PUBLISH=index_api.screening
+      - RMQ_QUEUE_PUBLISH_EMAILAPI=email_api.success
+      - RMQ_QUEUE_CONSUME=admin_api.order_received
       - DB_HOST=mysql
       - DB_DBPORT=3306
       - DB_USERNAME=root
       - DB_PASSWORD=password123
       - DB_DATABASE=scrum_hub
+
+  index_api:
+    depends_on:
+      - rabbitmq
+      - es01
+    image: rasmuskibshede/indexelasticsearch:latest
+    ports:
+      - '3001:3001'
+    environment:
+      - RMQ_URL=amqp://admin:password123@rabbitmq:5672/my_vhost
+      - RABBITMQ_USER=admin
+      - RABBITMQ_PASSWORD=password123
+      - RMQ_QUEUE=index_api.screening
+      - ELASTIC_HOST=https://es01:9200
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+
+  cinema_api:
+    depends_on:
+      - es01
+      - rabbitmq
+    image: rasmuskibshede/cinemaapi:latest
+    ports:
+      - '3002:3002'
+    environment:
+      - RMQ_URL=amqp://admin:password123@rabbitmq:5672/my_vhost
+      - RMQ_QUEUE=transaction_api.order
+      - ELASTIC_HOST=https://es01:9200
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - APP_PORT=3002
+
+  transaction_api:
+    depends_on:
+      - rabbitmq
+      - cinema_api
+    image: rasmuskibshede/transactionapi:latest
+    environment:
+      - RMQ_URL=amqp://admin:password123@rabbitmq:5672/my_vhost
+      - TRANSACTION_QUEUE=transaction_api.order
+      - ADMIN_QUEUE=admin_api.order_received
+      - EMAIL_QUEUE=email_api.declined
+
+  email_api:
+    image: rasmuskibshede/emailapi:latest
+    environment:
+      - RMQ_URL=amqp://admin:password123@rabbitmq:5672/my_vhost
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - TRANSACTION_QUEUE=email_api.declined
+      - ADMIN_QUEUE=email_api.success
 
   mysql:
     image: mysql:8.0

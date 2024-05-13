@@ -43,15 +43,17 @@ spec:
             - name: DB_USERNAME
               value: root
             - name: DB_PASSWORD
-              value: password
+              value: password123
             - name: DB_DATABASE
               value: scrum_hub
-            - name: RMQ_QUEUE
-              value: Elastic_QUEUE
-            - name: RABBITMQ_VHOST
-              value: my_vhost
             - name: RMQ_URL
               value: amqp://admin:password123@rabbitmq-service/my_vhost
+            - name: RMQ_QUEUE_PUBLISH
+              value: index_api.screening
+            - name: RMQ_QUEUE_PUBLISH_EMAILAPI
+              value: email_api.success
+            - name: RMQ_QUEUE_CONSUME
+              value: admin_api.order_received
           resources:
             limits:
               cpu: "1"

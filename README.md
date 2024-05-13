@@ -1,57 +1,83 @@
 # kubernetes
+
 This is a repo for orchestration the dls projects microservices and databases
 
 # Tools to de installed
+
 - Docker desktop
 - Kubernetes on docker desktop: https://docs.docker.com/desktop/kubernetes/
 - Minikube: https://minikube.sigs.k8s.io/docs/start/
 - Kubectl:
-    - Linux: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
-    - macOS: https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/
-    - Windows: https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/
+  - Linux: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+  - macOS: https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/
+  - Windows: https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/
 
 ## Driver
+
 - docker driver
 
 # Guide
+
 `Start minikube`
-```` bash
+
+```bash
     $ minikube start
-````
+```
 
 `Show minikube UI interface`
-```` bash
+
+```bash
     $ minikube dashboard
-````
+```
 
 `Show minikube UI interface`
-```` bash
+
+```bash
     $ minikube dashboard
-````
+```
 
 `Run kubernetes clusters`
-```` bash
+
+```bash
     $ npm run up
-````
+```
 
 `Teardown kubernetes clusters`
-```` bash
+
+```bash
     $ npm run down
-````
+```
+
 ### Without node package manager (npm)
+
 `Run kubernetes clusters`
-```` bash
+
+```bash
     $ kubectl apply -f k8s-setup/
-````
+```
 
 `Teardown kubernetes clusters`
-```` bash
+
+```bash
     $ kubectl delete -f k8s-setup/
-````
+```
 
 ### To serve the containers
 
 `Open connections to all services with an ip and port`
-```` bash
+
+```bash
     $ minikube service --all
-````
+```
+
+# Docker compose guide
+
+## Env
+
+For the mail to send, use trapmail.io and signup.</br>
+After signup insert the username and password in the env values
+
+```
+    - MAIL_USERNAME=<username_from_trapmail>
+    - MAIL_PASSWORD=<password_from_trapmail>
+```
