@@ -1,4 +1,5 @@
 version: '3'
+name: cinemahub
 
 services:
   admin_api:

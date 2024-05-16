@@ -72,9 +72,13 @@ This is a repo for orchestration the dls projects microservices and databases
 
 # Docker compose guide
 
-``When the containers is running, restart email, transaction and admin containers.``</br>
+## Run guide
+- stand in the project root
+- run ``docker compose -f "docker-compose.yml" up -d --build``
+- restart email, transaction and admin containers after compose up.
+- Wait for the setup container to be done/stopped. (It will be gray).
 
-## Seeding the database
+### Seed and make the database
 To seed the database go into the exec command line inside the admin container and run:</br>
 ```` bash
     npm run pop
