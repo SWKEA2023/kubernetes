@@ -72,7 +72,50 @@ This is a repo for orchestration the dls projects microservices and databases
 
 # Docker compose guide
 
+``When the containers is running, restart email, transaction and admin containers.``</br>
+
+## Seeding the database
+To seed the database go into the exec command line inside the admin container and run:</br>
+```` bash
+    npm run pop
+````
+
+
+## OpenAPI access
+Run endpoints when compose is running.
+
+``AdminAPI``</br>
+http://localhost:3000/api</br>
+</br>
+
+``CinemaAPI``</br>
+http://localhost:3002/api</br>
+
+
 ## Env
+
+````
+# Docker Configuration
+STACK_VERSION=8.13.0
+LICENSE=basic
+
+# Elastic Stack Configuration
+ELASTIC_PASSWORD=password1234
+ES_PORT=9200
+CLUSTER_NAME=docker-cluster
+
+# Kibana Configuration
+KIBANA_PASSWORD=password1234
+KIBANA_PORT=5601
+
+# Memory Configuration
+ES_MEM_LIMIT=1073741824
+KB_MEM_LIMIT=1073741824
+LS_MEM_LIMIT=1073741824
+
+# Sample Configuration (POC environments)
+ENCRYPTION_KEY=c34d38b3a14956121ff2170e5030b471551370178f43e5626eec58b04a30fae2
+````
 
 For the mail to send, use trapmail.io and signup.</br>
 After signup insert the username and password in the env values
