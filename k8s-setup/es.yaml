@@ -1,30 +1,41 @@
 ---
-kind: Service
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: elasticsearch
+  name: elasticsearch-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-service
+  labels:
+    app: elasticsearch
+spec:
+  selector:
+    app: elasticsearch
+  ports:
+    - port: 9200
+      targetPort: 9200
+---
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: elasticsearch
   labels:
     app: elasticsearch
 spec:
   selector:
-    app: elasticsearch
-  clusterIP: None
-  ports:
-    - port: 9200
-      name: rest
-    - port: 9300
-      name: inter-node
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: es-cluster
-spec:
-  serviceName: elasticsearch
-  replicas: 3
-  selector:
     matchLabels:
       app: elasticsearch
+  replicas: 1
   template:
     metadata:
       labels:
@@ -32,63 +43,24 @@ spec:
     spec:
       containers:
         - name: elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
-          resources:
-            limits:
-              cpu: 1000m
-            requests:
-              cpu: 100m
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
           ports:
             - containerPort: 9200
-              name: rest
-              protocol: TCP
             - containerPort: 9300
-              name: inter-node
-              protocol: TCP
-          volumeMounts:
-            - name: data
-              mountPath: /usr/share/elasticsearch/data
           env:
-            - name: cluster.name
-              value: k8s-logs
+            - name: ELASTIC_PASSWORD
+              value: password123
+            - name: discovery.type
+              value: single-node
             - name: node.name
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: discovery.seed_hosts
-              value: "es-cluster-0.elasticsearch,es-cluster-1.elasticsearch,es-cluster-2.elasticsearch"
-            - name: cluster.initial_master_nodes
-              value: "es-cluster-0,es-cluster-1,es-cluster-2"
-            - name: ES_JAVA_OPTS
-              value: "-Xms512m -Xmx512m"
-      initContainers:
-        - name: fix-permissions
-          image: busybox
-          command:
-            ["sh", "-c", "chown -R 1000:1000 /usr/share/elasticsearch/data"]
-          securityContext:
-            privileged: true
-          volumeMounts:
-            - name: data
-              mountPath: /usr/share/elasticsearch/data
-        - name: increase-vm-max-map
-          image: busybox
-          command: ["sysctl", "-w", "vm.max_map_count=262144"]
-          securityContext:
-            privileged: true
-        - name: increase-fd-ulimit
-          image: busybox
-          command: ["sh", "-c", "ulimit -n 65536"]
-          securityContext:
-            privileged: true
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-        labels:
-          app: elasticsearch
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        # storageClassName: ""
-        resources:
-          requests:
-            storage: 3Gi
+              value: elasticsearch
+            - name: cluster.name
+              value: elasticsearch
+            - name: xpack.security.http.ssl.enabled
+              value: "false"
+      volumes:
+        - name: elasticsearch-volume
+          persistentVolumeClaim:
+            claimName: elasticsearch-pvc
+---
+
