@@ -27,7 +27,8 @@
   ],
   "scripts": {
     "up": "kubectl apply -f k8s-setup/",
-    "down": "kubectl delete -f k8s-setup/"
+    "down": "kubectl delete -f k8s-setup/",
+    "serve": "minikube service cinemaapi-service adminapi-service mysql-service rabbitmq-service"
   },
   "dependencies": {
 
